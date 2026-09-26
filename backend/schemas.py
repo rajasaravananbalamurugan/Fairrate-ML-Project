@@ -55,6 +55,27 @@ class BenchmarkRate(BaseModel):
     typical_rate: float
 
 
+class ConfidenceInfo(BaseModel):
+    std: float
+    low: float
+    high: float
+
+
+class WaterfallItem(BaseModel):
+    feature: str
+    display_label: str
+    shap_value: float
+    raw_value: str
+    direction: str
+
+
+class BankCompareItem(BaseModel):
+    bank: str
+    predicted_rate: float
+    verdict_if_offered_here: str
+    savings_vs_worst: float
+
+
 class PredictionResponse(BaseModel):
     fair_rate: float
     offered_rate: float
@@ -66,6 +87,11 @@ class PredictionResponse(BaseModel):
     top_reasons: List[ReasonItem]
     benchmark_rates: List[BenchmarkRate]
     model_name: str
+    # Feature additions
+    confidence: Optional[ConfidenceInfo] = None
+    waterfall: Optional[List[WaterfallItem]] = None
+    base_value: Optional[float] = None
+    compare: Optional[List[BankCompareItem]] = None
 
 
 class HealthResponse(BaseModel):

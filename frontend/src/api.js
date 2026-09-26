@@ -28,4 +28,9 @@ export async function healthCheck() {
   return data;
 }
 
+export async function fetchBankComparison(params) {
+  const { data } = await api.get("/compare", { params });
+  return data;
+}
+
 export default api;

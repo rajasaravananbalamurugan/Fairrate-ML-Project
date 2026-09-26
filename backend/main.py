@@ -10,7 +10,7 @@ import os
 import sys
 import json
 import logging
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
@@ -23,8 +23,17 @@ from fastapi.middleware.cors import CORSMiddleware
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, BASE_DIR)
 
-from backend.schemas import LoanRequest, PredictionResponse, HealthResponse, BenchmarkRate, ReasonItem
-from ml.explain import explain_prediction
+from backend.schemas import (
+    LoanRequest,
+    PredictionResponse,
+    HealthResponse,
+    BenchmarkRate,
+    ReasonItem,
+    ConfidenceInfo,
+    WaterfallItem,
+    BankCompareItem,
+)
+from ml.explain import explain_prediction, get_shap_waterfall
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("fairrate")
@@ -192,6 +201,59 @@ def build_benchmark_table(loan_type: str) -> List[BenchmarkRate]:
     return result
 
 
+def run_bank_comparison(
+    model,
+    loan_type: str,
+    credit_score: float,
+    annual_income_lakh: float,
+    employment_type: str,
+    loan_amount_lakh: float,
+    tenure_years: float,
+    ltv_ratio: Optional[float] = None,
+    existing_obligations_pct: float = 20.0,
+    offered_rate: Optional[float] = None,
+) -> List[BankCompareItem]:
+    ltv = ltv_ratio if ltv_ratio is not None else 0.0
+    bank_results = []
+    for b in SUPPORTED_BANKS:
+        row_data = {
+            "loan_type": [loan_type],
+            "bank": [b],
+            "credit_score": [float(credit_score)],
+            "annual_income_lakh": [float(annual_income_lakh)],
+            "employment_type": [employment_type],
+            "loan_amount_lakh": [float(loan_amount_lakh)],
+            "tenure_years": [float(tenure_years)],
+            "ltv_ratio": [float(ltv)],
+            "existing_obligations_pct": [float(existing_obligations_pct)],
+        }
+        X_b = pd.DataFrame(row_data)[CATEGORICAL_FEATURES + NUMERICAL_FEATURES]
+        pred_b = round(float(model.predict(X_b)[0]), 2)
+        if offered_rate is not None:
+            verdict_b = get_verdict(offered_rate, pred_b)[0]
+        else:
+            verdict_b = "FAIR"
+        bank_results.append({
+            "bank": b,
+            "predicted_rate": pred_b,
+            "verdict_if_offered_here": verdict_b,
+        })
+
+    worst_rate = max(item["predicted_rate"] for item in bank_results) if bank_results else 0.0
+    final_list = []
+    for item in bank_results:
+        savings = round(worst_rate - item["predicted_rate"], 2)
+        final_list.append(BankCompareItem(
+            bank=item["bank"],
+            predicted_rate=item["predicted_rate"],
+            verdict_if_offered_here=item["verdict_if_offered_here"],
+            savings_vs_worst=savings
+        ))
+
+    final_list.sort(key=lambda x: x.predicted_rate)
+    return final_list
+
+
 # ─────────────────────────────────────────────
 # Endpoints
 # ─────────────────────────────────────────────
@@ -212,6 +274,46 @@ def get_banks():
 def get_loan_types():
     """Returns list of supported loan types."""
     return {"loan_types": SUPPORTED_LOAN_TYPES}
+
+
+@app.get("/compare", response_model=List[BankCompareItem], tags=["Comparison"])
+def compare_banks(
+    loan_type: str = "personal",
+    credit_score: int = 720,
+    annual_income_lakh: float = 12.0,
+    employment_type: str = "salaried",
+    loan_amount_lakh: float = 5.0,
+    tenure_years: int = 3,
+    offered_rate: Optional[float] = None,
+    ltv_ratio: Optional[float] = None,
+    existing_obligations_pct: float = 20.0,
+):
+    """
+    Compare predicted fair interest rate across all supported banks.
+    """
+    if not model_loaded or model is None:
+        raise HTTPException(
+            status_code=503,
+            detail="ML model not loaded. Please run ml/train.py first."
+        )
+
+    try:
+        results = run_bank_comparison(
+            model=model,
+            loan_type=loan_type,
+            credit_score=credit_score,
+            annual_income_lakh=annual_income_lakh,
+            employment_type=employment_type,
+            loan_amount_lakh=loan_amount_lakh,
+            tenure_years=tenure_years,
+            ltv_ratio=ltv_ratio,
+            existing_obligations_pct=existing_obligations_pct,
+            offered_rate=offered_rate,
+        )
+        return results
+    except Exception as e:
+        logger.error(f"Comparison error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Comparison failed: {str(e)}")
 
 
 @app.post("/predict", response_model=PredictionResponse, tags=["Prediction"])
@@ -241,6 +343,50 @@ def predict(req: LoanRequest):
             logger.warning(f"SHAP explanation failed: {e}")
             reasons = []
 
+        # Model confidence interval (Feature 5)
+        confidence = None
+        try:
+            regressor = model.named_steps["regressor"]
+            preprocessor = model.named_steps["preprocessor"]
+            X_processed = preprocessor.transform(X)
+            staged_preds = np.array([est[0].predict(X_processed) for est in regressor.estimators_[-50:]])
+            confidence_std = round(float(staged_preds.std()), 2)
+            confidence = ConfidenceInfo(
+                std=confidence_std,
+                low=round(fair_rate_pred - confidence_std, 2),
+                high=round(fair_rate_pred + confidence_std, 2),
+            )
+        except Exception as e:
+            logger.warning(f"Confidence calculation failed: {e}")
+
+        # SHAP waterfall (Feature 2)
+        waterfall = None
+        base_value = None
+        try:
+            wf_data = get_shap_waterfall(model, X, CATEGORICAL_FEATURES + NUMERICAL_FEATURES)
+            waterfall = [WaterfallItem(**item) for item in wf_data["waterfall"]]
+            base_value = wf_data["base_value"]
+        except Exception as e:
+            logger.warning(f"Waterfall calculation failed: {e}")
+
+        # Multi-bank comparison (Feature 1)
+        compare_list = None
+        try:
+            compare_list = run_bank_comparison(
+                model=model,
+                loan_type=req.loan_type,
+                credit_score=req.credit_score,
+                annual_income_lakh=req.annual_income_lakh,
+                employment_type=req.employment_type,
+                loan_amount_lakh=req.loan_amount_lakh,
+                tenure_years=req.tenure_years,
+                ltv_ratio=req.ltv_ratio,
+                existing_obligations_pct=req.existing_obligations_pct,
+                offered_rate=req.offered_rate,
+            )
+        except Exception as e:
+            logger.warning(f"Bank comparison failed: {e}")
+
         benchmark = build_benchmark_table(req.loan_type)
 
         return PredictionResponse(
@@ -254,6 +400,10 @@ def predict(req: LoanRequest):
             top_reasons=reasons,
             benchmark_rates=benchmark,
             model_name=model_name,
+            confidence=confidence,
+            waterfall=waterfall,
+            base_value=base_value,
+            compare=compare_list,
         )
 
     except HTTPException:

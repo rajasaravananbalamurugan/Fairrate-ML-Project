@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 
 const LOAN_TYPES = [
   { value: "personal",  label: "Personal",   icon: "👤" },
@@ -78,8 +78,14 @@ function MoneyInputCard({ id, label, sub, value, onChange, unit, min, max, step,
   );
 }
 
-export default function LoanForm({ onSubmit, loading }) {
-  const [form, setForm] = useState(DEFAULTS);
+export default function LoanForm({ onSubmit, loading, values }) {
+  const [form, setForm] = useState(values || DEFAULTS);
+
+  useEffect(() => {
+    if (values) {
+      setForm((prev) => ({ ...prev, ...values }));
+    }
+  }, [values]);
 
   const set = useCallback((key, val) => {
     setForm(prev => ({ ...prev, [key]: val }));
