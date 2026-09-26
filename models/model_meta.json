@@ -1,0 +1,30 @@
+{
+  "best_model_name": "Gradient Boosting Regressor",
+  "rmse": 0.2409,
+  "mae": 0.1961,
+  "r2": 0.9889,
+  "categorical_features": [
+    "loan_type",
+    "bank",
+    "employment_type"
+  ],
+  "numerical_features": [
+    "credit_score",
+    "annual_income_lakh",
+    "loan_amount_lakh",
+    "tenure_years",
+    "ltv_ratio",
+    "existing_obligations_pct"
+  ],
+  "feature_names_in": [
+    "loan_type",
+    "bank",
+    "employment_type",
+    "credit_score",
+    "annual_income_lakh",
+    "loan_amount_lakh",
+    "tenure_years",
+    "ltv_ratio",
+    "existing_obligations_pct"
+  ]
+}

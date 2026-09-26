@@ -1,0 +1,1 @@
+# FAIRRATE package
