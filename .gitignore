@@ -24,9 +24,9 @@ wheels/
 *.egg
 .pytest_cache/
 
-# ML Artifacts & Datasets
-models/*.pkl
-models/model_meta.json
+# ML Artifacts & Datasets (keep trained weights tracked for deployment)
+# models/*.pkl
+# models/model_meta.json
 data/loan_data.csv
 
 # Node / Frontend

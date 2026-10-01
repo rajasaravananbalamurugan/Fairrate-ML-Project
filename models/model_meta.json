@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "trained_date": "2026-10-01",
+  "best_model_name": "Gradient Boosting Regressor",
+  "rmse": 0.2967,
+  "mae": 0.2187,
+  "r2": 0.9835,
+  "rbi_repo_rate_at_training": 6.5,
+  "prediction_interval": {
+    "method": "Quantile Gradient Boosting (alpha=0.10, alpha=0.90)",
+    "coverage_pct": 80.0
+  },
+  "categorical_features": [
+    "loan_type",
+    "bank",
+    "employment_type"
+  ],
+  "numerical_features": [
+    "credit_score",
+    "annual_income_lakh",
+    "loan_amount_lakh",
+    "tenure_years",
+    "ltv_ratio",
+    "existing_obligations_pct"
+  ],
+  "banks_supported": [
+    "Tata",
+    "Kotak",
+    "ICICI",
+    "BOB",
+    "Bajaj",
+    "HDFC",
+    "Union",
+    "Canara",
+    "PNB",
+    "Axis",
+    "SBI"
+  ],
+  "loan_types_supported": [
+    "home",
+    "personal",
+    "education",
+    "car",
+    "gold",
+    "lap",
+    "business"
+  ]
+}
