@@ -24,9 +24,15 @@ wheels/
 *.egg
 .pytest_cache/
 
+# ML Artifacts & Datasets
+models/*.pkl
+models/model_meta.json
+data/loan_data.csv
+
 # Node / Frontend
 node_modules/
 frontend/node_modules/
+dist/
 frontend/dist/
 frontend/dist-ssr/
 *.local

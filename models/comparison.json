@@ -1,0 +1,124 @@
+{
+  "timestamp": "2026-10-01T13:47:31.229011+00:00",
+  "dataset_rows": 6000,
+  "cv_folds": 5,
+  "best_model": "Gradient Boosting Regressor",
+  "models": [
+    {
+      "model_name": "Random Forest Regressor",
+      "rmse": 0.3691,
+      "rmse_std": 0.0121,
+      "mae": 0.2571,
+      "r2": 0.9742,
+      "training_time_sec": 1.28,
+      "cv_folds": 5,
+      "is_best": false
+    },
+    {
+      "model_name": "Gradient Boosting Regressor",
+      "rmse": 0.2967,
+      "rmse_std": 0.0135,
+      "mae": 0.2201,
+      "r2": 0.9833,
+      "training_time_sec": 5.23,
+      "cv_folds": 5,
+      "is_best": true
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "ltv_ratio",
+      "importance": 0.4887
+    },
+    {
+      "feature": "loan_type",
+      "importance": 0.3492
+    },
+    {
+      "feature": "credit_score",
+      "importance": 0.066
+    },
+    {
+      "feature": "bank",
+      "importance": 0.0493
+    },
+    {
+      "feature": "loan_amount_lakh",
+      "importance": 0.0076
+    },
+    {
+      "feature": "employment_type",
+      "importance": 0.0075
+    },
+    {
+      "feature": "existing_obligations_pct",
+      "importance": 0.0062
+    },
+    {
+      "feature": "annual_income_lakh",
+      "importance": 0.005
+    }
+  ],
+  "detailed_features": [
+    {
+      "feature": "ltv_ratio",
+      "importance": 0.4887
+    },
+    {
+      "feature": "loan_type_education",
+      "importance": 0.2721
+    },
+    {
+      "feature": "credit_score",
+      "importance": 0.066
+    },
+    {
+      "feature": "loan_type_home",
+      "importance": 0.0537
+    },
+    {
+      "feature": "bank_Bajaj",
+      "importance": 0.0228
+    },
+    {
+      "feature": "bank_Tata",
+      "importance": 0.0132
+    },
+    {
+      "feature": "loan_type_personal",
+      "importance": 0.0102
+    },
+    {
+      "feature": "loan_type_business",
+      "importance": 0.009
+    },
+    {
+      "feature": "bank_Axis",
+      "importance": 0.0082
+    },
+    {
+      "feature": "loan_amount_lakh",
+      "importance": 0.0076
+    },
+    {
+      "feature": "employment_type_salaried",
+      "importance": 0.0075
+    },
+    {
+      "feature": "existing_obligations_pct",
+      "importance": 0.0062
+    },
+    {
+      "feature": "bank_Kotak",
+      "importance": 0.0051
+    },
+    {
+      "feature": "annual_income_lakh",
+      "importance": 0.005
+    },
+    {
+      "feature": "loan_type_lap",
+      "importance": 0.0042
+    }
+  ]
+}

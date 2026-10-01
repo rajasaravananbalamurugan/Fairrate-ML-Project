@@ -152,8 +152,8 @@ export default function BankComparison({ result, formValues }) {
         )}
       </div>
 
-      {/* Recharts Horizontal Bar Chart */}
-      <div className="w-full h-64">
+      {/* Recharts Horizontal Bar Chart with dynamic height for all 11 lenders */}
+      <div className="w-full" style={{ height: `${Math.max(260, sortedData.length * 32 + 50)}px` }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             layout="vertical"

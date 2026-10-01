@@ -26,7 +26,7 @@ FEATURE_LABELS = {
 # Templates for positive vs. negative SHAP contribution
 REASON_TEMPLATES = {
     "credit_score": {
-        "positive": "Low credit score ({val}) significantly increases your rate.",
+        "positive": "Credit score ({val}) adds a spread compared to prime tier above 750.",
         "negative": "Strong credit score ({val}) is helping keep your rate lower.",
     },
     "annual_income_lakh": {

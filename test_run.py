@@ -26,16 +26,9 @@ def main():
     print(f"   Model Loaded: {health.get('model_loaded')}")
     print(f"   Version     : {health.get('version')}")
 
-    # 2. Reference data
-    banks = call_api("/banks")["banks"]
-    loan_types = call_api("/loan-types")["loan_types"]
-    print(f"\n2. Reference Catalogs:")
-    print(f"   Supported Banks      : {', '.join(banks)}")
-    print(f"   Supported Loan Types : {', '.join(loan_types)}")
-
-    # 3. Test Case 1: Personal Loan - Fair Rate Scenario
+    # 2. Test Case 1: Personal Loan - Fair Rate Scenario
     print("\n" + "=" * 65)
-    print("3. Test Case 1: Salaried Personal Loan (Credit 750, 13.5% Offer)")
+    print("2. Test Case 1: Salaried Personal Loan (Credit 750, 13.5% Offer)")
     print("-" * 65)
     p1 = {
         "loan_type": "personal",
@@ -55,7 +48,7 @@ def main():
     print(f"   Offered Rate    : {r1['offered_rate']:.2f}%")
     print(f"   Spread/Diff     : {r1['difference']:+.2f}%")
     print(f"   Verdict         : {r1['verdict_emoji']} {r1['verdict']}")
-    print(f"   95% Confidence  : [{r1['confidence']['low']:.2f}%, {r1['confidence']['high']:.2f}%]")
+    print(f"   Typical Error   : ±{r1['confidence']['std']:.2f}% (Expected Range: [{r1['confidence']['low']:.2f}%, {r1['confidence']['high']:.2f}%])")
     print(f"   Status Message  : {r1['message']}")
     print("\n   Key SHAP Driver Features:")
     for f in r1.get("top_reasons", []):

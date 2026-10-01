@@ -1,6 +1,23 @@
-# FAIRRATE — ML Loan Interest Rate Fairness Checker
+﻿# ⚖️ FAIRRATE — AI-Powered Loan Rate Fairness Suite
 
-> **Is your bank charging you too much?** FAIRRATE uses machine learning trained on Indian bank rate cards to predict a fair interest rate for your loan profile and flags whether you're getting a fair deal, a high rate, or a red flag.
+> **Is your bank's interest rate fair or inflated?**  
+> FAIRRATE uses a scikit-learn Gradient Boosting model with SHAP explainability, trained on real Indian lending rate data, to help borrowers understand if the rate they have been offered is competitive.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-indigo.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.110-009688.svg)](https://fastapi.tiangolo.com)
+
+---
+
+## 🚀 What It Does
+
+FAIRRATE is a full-stack ML application with **4 feature groups** and **20 UI sections** that help Indian borrowers:
+
+1. **Analyze** — Submit your loan profile, get an ML-predicted fair rate, SHAP explanation, and bank comparison
+2. **Plan** — Calculate EMI & prepayment schedules, compare balance transfer savings, compute true APR, and simulate repo-rate linked products
+3. **Tools** — Upload your offer letter for AI parsing, generate an AI negotiation script, chat with a loan assistant, and share results
+4. **Model Lab** — Inspect the ML model for fairness, compare model versions, view prediction intervals, and monitor data drift
 
 ---
 
@@ -8,100 +25,218 @@
 
 ```
 fairrate/
-├── data/
-│   ├── generate_data.py      # Synthetic dataset generator
-│   └── loan_data.csv         # Generated dataset (after running step 1)
-├── ml/
-│   ├── train.py              # Model training pipeline (RF + GB comparison)
-│   ├── evaluate.py           # Detailed evaluation metrics
-│   └── explain.py            # SHAP explainability module
-├── models/
-│   ├── model.pkl             # Best trained model (after step 2)
-│   ├── preprocessor.pkl      # Fitted preprocessor
-│   └── model_meta.json       # Model metadata
-├── backend/
-│   ├── main.py               # FastAPI app
-│   ├── schemas.py            # Pydantic request/response models
-│   └── requirements.txt      # Python dependencies
-├── frontend/
+├── backend/                    # FastAPI REST API
+│   ├── main.py                 # 15 API endpoints (predict, plan, tools, model-lab)
+│   ├── schemas.py              # Pydantic request/response models
+│   ├── financial_math.py       # EMI, APR, prepayment, balance-transfer calculations
+│   ├── tools_service.py        # Groq LLM integration (negotiation script, chat, OCR)
+│   ├── requirements.txt        # Python dependencies
+│   └── Dockerfile              # Backend container
+│
+├── frontend/                   # React 18 + Vite SPA
 │   ├── src/
-│   │   ├── App.jsx           # Main React app
-│   │   ├── components/
-│   │   │   ├── LoanForm.jsx  # Borrower profile form
-│   │   │   ├── VerdictCard.jsx  # Result verdict display
-│   │   │   ├── RateTable.jsx    # Bank benchmark table
-│   │   │   └── ReasonsList.jsx  # SHAP reasons
-│   │   └── api.js            # Axios API client
-│   └── vite.config.js
+│   │   ├── App.jsx             # Main app shell, grouped navigation, login gate
+│   │   ├── api.js              # Axios API client
+│   │   ├── i18n.js             # Translations (English, Tamil, Hindi)
+│   │   ├── index.css           # Design system (glassmorphism, tokens, animations)
+│   │   └── components/
+│   │       ├── LoginPage.jsx             # Login gate (name + email, no password)
+│   │       ├── LoanForm.jsx              # Loan profile input form (all-manual)
+│   │       ├── VerdictCard.jsx           # Rate fairness verdict + EMI summary
+│   │       ├── ShapWaterfall.jsx         # SHAP feature impact waterfall chart
+│   │       ├── WhatIfSimulator.jsx       # What-If rate simulator (sliders)
+│   │       ├── BankComparison.jsx        # 11-bank rate comparison table
+│   │       ├── PrepaymentCalculator.jsx  # EMI & prepayment planner + chart
+│   │       ├── BalanceTransferCalculator.jsx  # Balance transfer savings
+│   │       ├── AprCalculator.jsx         # True cost / APR calculator
+│   │       ├── RepoSimulator.jsx         # Repo-linked rate simulator
+│   │       ├── CreditImprovementPlanner.jsx   # Credit score improvement plan
+│   │       ├── OfferParser.jsx           # Upload & parse offer letter (AI OCR)
+│   │       ├── AiNegotiationScript.jsx   # AI-generated negotiation script
+│   │       ├── ChatAssistant.jsx         # Loan Q&A chat assistant (Groq LLM)
+│   │       ├── ShareResultModal.jsx      # Share rate verdict
+│   │       ├── FairnessAuditView.jsx     # Model fairness across demographics
+│   │       ├── ModelComparisonView.jsx   # ML model version comparison
+│   │       ├── PredictionIntervalsView.jsx  # Quantile prediction intervals
+│   │       ├── DataSourcesView.jsx       # Training data provenance
+│   │       └── DriftMonitorView.jsx      # Feature distribution drift monitor
+│   ├── package.json
+│   ├── vite.config.js
+│   └── Dockerfile
+│
+├── ml/                         # ML pipeline scripts
+│   ├── train.py                # Train Gradient Boosting + save artifacts
+│   ├── explain.py              # SHAP explainer + waterfall generator
+│   ├── fairness_audit.py       # Demographic fairness metrics
+│   ├── drift_check.py          # Feature drift detection (PSI / KS)
+│   └── load_real_data.py       # Load real RBI rate card data
+│
+├── data/
+│   ├── generate_data.py        # Synthetic training data generator
+│   └── real_rate_cards.csv     # Real Indian bank rate card data
+│
+├── models/                     # Saved ML model artifacts (git-ignored)
+│   ├── model.pkl               # Trained GradientBoostingRegressor
+│   ├── preprocessor.pkl        # Fitted ColumnTransformer
+│   └── model_meta.json         # Version, metrics, feature list
+│
+├── tests/                      # pytest test suite
+│   ├── test_api.py             # API endpoint integration tests
+│   └── test_financial_math.py  # Financial calculation unit tests
+│
+├── config/
+│   └── rate_cards.json         # Bank-wise rate card config
+│
+├── .github/
+│   └── workflows/ci.yml        # GitHub Actions CI pipeline
+├── docker-compose.yml          # Full stack: frontend + backend + nginx
+├── render.yaml                 # Render.com deployment blueprint
+├── check_system.py             # System health check (15 endpoint tests)
 └── README.md
 ```
 
 ---
 
-## 🚀 Setup Instructions
+## 🔐 Login & Session
+
+The app opens with a **login screen** that collects the user Full Name and Email Address before granting access. This ensures:
+- Users enter their own real loan data (no pre-filled example values or presets)
+- The session is entirely client-side (no database, no auth server)
+- User name and avatar appear in the sidebar with a Sign Out button
+- On sign out, all loan data is cleared and the login screen is shown again
+
+---
+
+## 📋 Feature Sections
+
+### 🔍 Analyze Group
+
+**Loan Profile** — Enter your loan type, bank, credit score, income, employment, loan amount, tenure, LTV, existing obligations, and offered rate. All fields are user-entered (no presets or example personas).
+
+**Rate Verdict** — The ML model predicts a fair rate and compares it to your offered rate. Shows rate spread (over/under), confidence band (p10–p90), quick EMI summary, and a color-coded verdict badge (Excellent / Fair / Slightly High / Overpriced).
+
+**Why (SHAP)** — A waterfall chart showing exactly which features pushed your rate up or down from the model base rate. Powered by SHAP TreeExplainer.
+
+**Compare** — Side-by-side table of estimated rates from 11 Indian banks and NBFCs for your exact profile, sorted from cheapest to most expensive.
+
+**What-If** — Interactive sliders to simulate how improving your credit score, reducing loan amount, or changing tenure would affect your predicted rate.
+
+### 📈 Plan Group
+
+**EMI & Prepayment** — Full reducing-balance EMI schedule. Shows interest saved by making extra lump-sum or monthly prepayments, with an amortization chart.
+
+**Balance Transfer** — Enter your current outstanding balance, remaining tenure, and current rate vs a new lender rate. Shows break-even months, total savings, and net benefit after processing fees.
+
+**True Cost (APR)** — Computes the effective APR by incorporating processing fees, insurance premiums, and other charges. Shows the hidden cost vs nominal rate.
+
+**Repo-Linked Rates** — Simulates how an EBLR (External Benchmark Linked Rate) loan would behave across different RBI repo rate scenarios. Helps borrowers decide between fixed and floating rate products.
+
+**Credit Improvement Planner** — Generates a personalized action plan (pay down credit utilization, dispute errors, avoid hard inquiries) with estimated CIBIL score improvement timeline.
+
+### 🛠️ Tools Group
+
+**Upload Offer Letter** — Upload your bank sanction letter (PDF or image). The AI extracts loan amount, rate, tenure, processing fee, and pre-payment terms automatically.
+
+**AI Negotiation Script** — Generates a professional, personalized negotiation letter you can send or speak to your bank relationship manager, leveraging your SHAP factors as arguments. Powered by Groq LLM.
+
+**Chat Assistant** — A conversational AI (powered by Groq) that answers questions about your specific loan profile, EMI, prepayment strategies, and interest rate fairness in plain language.
+
+**Share Result** — Generate a shareable summary of your rate verdict to share with a financial advisor or family.
+
+### 🔬 Model Lab Group
+
+**Fairness Audit** — Evaluates the model for demographic bias across income quartiles, employment types, and loan types. Reports Equalized Odds, Demographic Parity, and Equal Opportunity metrics.
+
+**Model Comparison** — Compare current production model vs a challenger model on accuracy (MAE, RMSE), calibration, and fairness metrics.
+
+**Prediction Intervals** — Displays bootstrap-derived 80% and 95% prediction intervals for the current input profile. Shows model uncertainty visually.
+
+**Data Sources** — Documents the training data provenance: synthetic data generation, real RBI/NHB rate circulars used for calibration, and data versioning.
+
+**Drift Monitor** — Monitors feature distributions in live predictions vs training data. Reports Population Stability Index (PSI) and KS-test p-values per feature to detect model staleness.
+
+---
+
+## 🧠 ML Model
+
+| Component | Detail |
+|-----------|--------|
+| **Algorithm** | GradientBoostingRegressor (scikit-learn) |
+| **Target** | Fair interest rate (% p.a.) |
+| **Features** | Loan type, bank, credit score, income, employment type, loan amount, tenure, LTV ratio, existing obligations |
+| **Explainability** | SHAP TreeExplainer waterfall and bar charts |
+| **Quantile Prediction** | 10th / 50th / 90th percentile via separate quantile regressors |
+| **Fairness Metrics** | Equalized Odds across income quartiles and employment type |
+| **Training Data** | Synthetic data calibrated to RBI / NHB rate circulars and real bank rate cards |
+
+---
+
+## 🔌 API Endpoints
+
+### Analyze
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | /predict | Standard ML rate prediction |
+| POST | /predict-v2 | Quantile prediction with confidence intervals |
+
+### Plan
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | /plan/prepayment | EMI schedule + prepayment impact |
+| POST | /plan/balance-transfer | Balance transfer savings analysis |
+| POST | /plan/apr | True APR / effective cost of loan |
+| POST | /plan/repo-rate | Repo-linked loan simulator |
+| POST | /plan/credit-improvement | Credit score improvement roadmap |
+
+### Tools
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | /tools/parse-offer | AI OCR parsing of offer letter PDF/image |
+| POST | /tools/negotiation-script | Groq LLM negotiation script generator |
+| POST | /tools/chat | Loan Q&A chat assistant |
+
+### Model Lab
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /model/registry | Active model version + metrics |
+| POST | /model/fairness-audit | Fairness metrics across subgroups |
+| POST | /model/compare | Compare two model versions |
+| POST | /model/prediction-intervals | Bootstrap prediction intervals |
+| GET | /model/drift | Feature distribution drift report |
+
+---
+
+## ⚙️ Local Setup
 
 ### Prerequisites
-
-- Python 3.9+
+- Python 3.11+
 - Node.js 18+
-- pip
+- Groq API Key (https://console.groq.com) — for AI features
 
----
-
-### Step 1: Generate Synthetic Dataset
+### 1. Clone
 
 ```bash
-cd fairrate
-python data/generate_data.py
+git clone https://github.com/rajasaravananbalamurugan/Fairrate-ML-Project.git
+cd Fairrate-ML-Project
 ```
 
-This creates `data/loan_data.csv` with 5,000 synthetic loan records built from RBI base rates and Indian bank spread logic.
-
----
-
-### Step 2: Install Python Dependencies
+### 2. Backend
 
 ```bash
+python -m venv venv
+.\venv\Scripts\activate
+
 pip install -r backend/requirements.txt
-```
 
----
+cp .env.example .env
+# Edit .env and add GROQ_API_KEY=gsk_...
 
-### Step 3: Train the ML Model
-
-```bash
 python ml/train.py
+
+python -m uvicorn backend.main:app --reload --port 8000
 ```
 
-This will:
-- Train a **Random Forest Regressor** and **Gradient Boosting Regressor**
-- Print a comparison table (RMSE, MAE, R²)
-- Save the best model to `models/model.pkl`
-- Save the fitted preprocessor to `models/preprocessor.pkl`
-
-Optional — run detailed evaluation:
-
-```bash
-python ml/evaluate.py
-```
-
----
-
-### Step 4: Start the FastAPI Backend
-
-```bash
-# From the fairrate/ root directory
-uvicorn backend.main:app --reload --port 8000
-```
-
-The API will be available at:
-- 🌐 `http://localhost:8000`
-- 📚 Docs: `http://localhost:8000/docs`
-- ❤️ Health: `http://localhost:8000/health`
-
----
-
-### Step 5: Start the React Frontend
+### 3. Frontend
 
 ```bash
 cd frontend
@@ -109,131 +244,56 @@ npm install
 npm run dev
 ```
 
-The frontend runs at `http://localhost:5173`.
+Open http://localhost:5173 — you will see the login screen first.
 
----
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `POST` | `/predict` | Predict fair rate + verdict + SHAP reasons |
-| `GET`  | `/health` | Health check |
-| `GET`  | `/banks` | Supported banks list |
-| `GET`  | `/loan-types` | Supported loan types |
-
-### Example Request
+### 4. Docker Compose (full stack)
 
 ```bash
-curl -X POST http://localhost:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{
-    "loan_type": "personal",
-    "bank": "HDFC",
-    "credit_score": 720,
-    "annual_income_lakh": 12.0,
-    "employment_type": "salaried",
-    "loan_amount_lakh": 5.0,
-    "tenure_years": 3,
-    "ltv_ratio": null,
-    "existing_obligations_pct": 20.0,
-    "offered_rate": 13.5
-  }'
-```
-
-### Example Response
-
-```json
-{
-  "fair_rate": 12.34,
-  "offered_rate": 13.5,
-  "difference": 1.16,
-  "verdict": "HIGH",
-  "verdict_emoji": "⚠️",
-  "message": "Your offered rate is 1.16% above the fair rate of 12.34%.",
-  "explainer": "Your bank is offering 13.50%, but our model estimates...",
-  "top_reasons": [
-    {
-      "feature": "credit_score",
-      "label": "Credit Score",
-      "shap_value": 0.45,
-      "direction": "positive",
-      "reason": "Low credit score (720) significantly increases your rate."
-    }
-  ],
-  "benchmark_rates": [...],
-  "model_name": "Gradient Boosting Regressor"
-}
+docker-compose up --build
 ```
 
 ---
 
-## 🤖 ML Model Details
+## 🌍 Deployment
 
-### Dataset
-
-- **5,000 synthetic records** generated from RBI base rates + bank spread logic
-- Features: loan_type, bank, credit_score, annual_income_lakh, employment_type, loan_amount_lakh, tenure_years, ltv_ratio, existing_obligations_pct
-- Target: `fair_rate` (% per annum)
-
-### Rate Logic
-
-| Factor | Impact |
-|--------|--------|
-| Credit score ≥ 750 | No spread |
-| Credit score 700–749 | +0.75% |
-| Credit score 650–699 | +1.5% |
-| Credit score < 650 | +3.0% |
-| Self-employed | +0.5% |
-| Business owner | +1.0% |
-| LTV > 85% | +1.5% |
-| Obligations > 50% income | +1.5% |
-
-### Models Compared
-
-| Model | Typical RMSE | Notes |
-|-------|-------------|-------|
-| Random Forest Regressor | ~0.25% | Fast, robust to outliers |
-| Gradient Boosting Regressor | ~0.22% | Usually wins on RMSE |
-
-### Explainability
-
-SHAP (SHapley Additive exPlanations) `TreeExplainer` is used to generate per-prediction feature attributions, aggregated back to original features (before one-hot encoding).
+- **Backend** — Render.com Web Service (render.yaml)
+- **Frontend** — Vercel (frontend/vercel.json)
 
 ---
 
-## ⚙️ Configuration
+## 🧪 Tests
 
-Verdict thresholds are configurable in `backend/main.py`:
-
-```python
-VERDICT_FAIR_THRESHOLD = 0.5   # ≤ 0.5% above fair → FAIR
-VERDICT_HIGH_THRESHOLD = 1.5   # ≤ 1.5% above fair → HIGH (else RED FLAG)
+```bash
+pytest tests/ -v
+python check_system.py
 ```
 
 ---
 
-## 📌 Supported Loan Types & Banks
+## 📦 Tech Stack
 
-**Loan Types:** Personal · Home · Car · Education
-
-**Banks:** SBI · HDFC · ICICI · Axis · Kotak
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18 + Vite |
+| Styling | Vanilla CSS (glassmorphism) |
+| Internationalisation | react-i18next (EN / Tamil / Hindi) |
+| Charts | Recharts |
+| Backend | FastAPI |
+| ML | scikit-learn GradientBoostingRegressor |
+| Explainability | SHAP TreeExplainer |
+| LLM | Groq API (openai/gpt-oss-120b) |
+| HTTP Client | Axios |
+| Containerisation | Docker + Docker Compose |
+| CI/CD | GitHub Actions |
 
 ---
 
 ## ⚠️ Disclaimer
 
-This tool is for **educational purposes only**. Rate predictions are based on synthetic data derived from publicly available bank rate cards. This is **not financial advice**. Always consult a certified financial advisor before taking any loan.
+FAIRRATE is for **educational and informational purposes only**. It does not constitute financial advice. Rate predictions are model estimates. Always consult a certified financial advisor before making loan decisions.
 
 ---
 
-## 🛠️ Tech Stack
+## 📄 License
 
-| Layer | Technology |
-|-------|-----------|
-| Data | Python, NumPy, Pandas |
-| ML | scikit-learn (Random Forest, Gradient Boosting) |
-| Explainability | SHAP TreeExplainer |
-| Backend | FastAPI + Uvicorn + Pydantic |
-| Frontend | React + Vite + Tailwind CSS |
-| API Client | Axios |
+MIT © 2024 Rajasaravanan Balamurugan

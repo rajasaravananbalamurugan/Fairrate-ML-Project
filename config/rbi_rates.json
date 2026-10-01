@@ -1,0 +1,13 @@
+{
+  "repo_rate": 6.50,
+  "reverse_repo_rate": 3.35,
+  "standing_deposit_facility_rate": 6.25,
+  "marginal_standing_facility_rate": 6.75,
+  "bank_rate": 6.75,
+  "cash_reserve_ratio_pct": 4.50,
+  "statutory_liquidity_ratio_pct": 18.00,
+  "effective_date": "2024-02-08",
+  "last_verified_date": "2024-10-01",
+  "source": "Reserve Bank of India Monetary Policy Committee (RBI MPC) Official Releases",
+  "notes": "Base policy repo rate held steady at 6.50%. Floating rate loans (EBR/RLLR) are benchmarked to this rate plus bank credit spread."
+}

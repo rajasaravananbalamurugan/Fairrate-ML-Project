@@ -1,0 +1,13 @@
+[
+  {
+    "version": "2.0.0",
+    "date": "2026-10-01T13:47:31.231389+00:00",
+    "model_name": "Gradient Boosting Regressor",
+    "rmse": 0.2967,
+    "mae": 0.2187,
+    "r2": 0.9835,
+    "features_count": 9,
+    "is_active": true,
+    "notes": "Expanded 11 banks & 7 loan types, quantile prediction intervals, calibrated with real rate cards."
+  }
+]

@@ -1,0 +1,77 @@
+bank,loan_type,min_rate,max_rate,source_url,date_collected,notes,is_verified
+SBI,home,8.50,9.65,https://sbi.co.in/web/personal-banking/loans/home-loans,2024-09-15,SBI Regular Home Loan linked to EBLR (Repo 6.50% + spread),True
+SBI,personal,10.65,15.75,https://sbi.co.in/web/personal-banking/loans/personal-loans,2024-09-15,SBI Xpress Credit for salaried government/corporate employees,True
+SBI,car,8.85,12.85,https://sbi.co.in/web/personal-banking/loans/auto-loans,2024-09-15,SBI New Car Loan fixed/floating tiers,True
+SBI,education,8.15,10.90,https://sbi.co.in/web/personal-banking/loans/education-loans,2024-09-15,SBI Student Loan Scheme with concession for girls,True
+SBI,gold,8.80,10.50,https://sbi.co.in/web/personal-banking/loans/gold-loans,2024-09-15,SBI Personal Gold Loan up to 75% LTV,True
+SBI,business,10.50,15.20,https://sbi.co.in/web/business/sme-loans,2024-09-15,TODO: Verify against current SBI SME/Mudra credit schedule,False
+SBI,lap,9.25,11.50,https://sbi.co.in/web/personal-banking/loans/loan-against-property,2024-09-15,TODO: Verify maximum tenure and LTV caps from SBI portal,False
+HDFC,home,8.70,9.95,https://www.hdfcbank.com/personal/borrow/popular-loans/home-loan,2024-09-20,HDFC Bank Reach Home Loan special rates,True
+HDFC,personal,10.85,21.50,https://www.hdfcbank.com/personal/borrow/popular-loans/personal-loan,2024-09-20,Risk-based pricing based on company category and CIBIL,True
+HDFC,car,8.75,11.50,https://www.hdfcbank.com/personal/borrow/popular-loans/car-loan,2024-09-20,HDFC New Car Loan for preferred relationship customers,True
+HDFC,education,9.55,13.25,https://www.hdfcbank.com/personal/borrow/popular-loans/educational-loan,2024-09-20,HDFC Credila & Bank Education Loan schemes,True
+HDFC,gold,9.10,12.50,https://www.hdfcbank.com/personal/borrow/popular-loans/gold-loan,2024-09-20,TODO: Verify processing charges and min branch valuation rates,False
+HDFC,business,11.90,18.50,https://www.hdfcbank.com/personal/borrow/popular-loans/business-loan,2024-09-20,TODO: Verify audited turnover requirements and collateral terms,False
+HDFC,lap,9.50,11.75,https://www.hdfcbank.com/personal/borrow/popular-loans/loan-against-property,2024-09-20,TODO: Verify residential vs commercial property LTV bounds,False
+ICICI,home,8.75,9.90,https://www.icicibank.com/personal-banking/loans/home-loan,2024-09-18,ICICI floating home loan tied to I-EBLR,True
+ICICI,personal,10.85,19.00,https://www.icicibank.com/personal-banking/loans/personal-loan,2024-09-18,ICICI Personal Loan instant pre-approved tiers,True
+ICICI,car,8.80,12.50,https://www.icicibank.com/personal-banking/loans/car-loan,2024-09-18,ICICI Auto Loan terms for salaried individuals,True
+ICICI,education,10.25,12.75,https://www.icicibank.com/personal-banking/loans/education-loan,2024-09-18,TODO: Verify overseas vs domestic education loan bounds,False
+ICICI,gold,8.95,11.50,https://www.icicibank.com/personal-banking/loans/gold-loan,2024-09-18,TODO: Verify per-gram gold valuation rate and tenor limits,False
+ICICI,business,12.00,18.00,https://www.icicibank.com/business-banking/loans,2024-09-18,TODO: Verify GST-backed business credit rate slab,False
+ICICI,lap,9.60,11.85,https://www.icicibank.com/personal-banking/loans/loan-against-property,2024-09-18,TODO: Verify industrial property exclusion guidelines,False
+Axis,home,8.75,9.90,https://www.axisbank.com/retail/loans/home-loan,2024-09-10,Axis Shubh Aarambh and standard retail home loan,True
+Axis,personal,10.49,22.00,https://www.axisbank.com/retail/loans/personal-loan,2024-09-10,Axis 24x7 personal loan range for prime borrowers,True
+Axis,car,9.25,13.50,https://www.axisbank.com/retail/loans/car-loan,2024-09-10,TODO: Verify EV concession and dealer tie-up rates,False
+Axis,education,13.70,15.20,https://www.axisbank.com/retail/loans/education-loan,2024-09-10,TODO: Verify premier institute subsidized interest cards,False
+Axis,gold,9.20,12.00,https://www.axisbank.com/retail/loans/gold-loan,2024-09-10,TODO: Verify bullet repayment interest structure,False
+Axis,business,12.50,19.00,https://www.axisbank.com/business-banking/loans,2024-09-10,TODO: Verify MSME credit guarantee scheme concession,False
+Axis,lap,9.75,12.00,https://www.axisbank.com/retail/loans/loan-against-property,2024-09-10,TODO: Verify self-occupied property interest concession,False
+Kotak,home,8.75,9.65,https://www.kotak.com/en/personal-banking/loans/home-loan.html,2024-09-12,Kotak Home Loan special CIBIL 750+ rates,True
+Kotak,personal,10.99,24.00,https://www.kotak.com/en/personal-banking/loans/personal-loan.html,2024-09-12,Kotak Personal Loan broad risk spectrum,True
+Kotak,car,8.75,13.00,https://www.kotak.com/en/personal-banking/loans/car-loan.html,2024-09-12,TODO: Verify luxury vehicle vs economy vehicle interest rates,False
+Kotak,education,10.99,13.50,https://www.kotak.com/en/personal-banking/loans/education-loan.html,2024-09-12,TODO: Verify STEM study overseas interest concessions,False
+Kotak,gold,9.50,13.50,https://www.kotak.com/en/personal-banking/loans/gold-loan.html,2024-09-12,TODO: Verify gold purity criteria and branch valuation fee,False
+Kotak,business,13.00,20.00,https://www.kotak.com/en/business-banking/loans.html,2024-09-12,TODO: Verify uncollateralized merchant business loan schedule,False
+Kotak,lap,9.80,12.25,https://www.kotak.com/en/personal-banking/loans/loan-against-property.html,2024-09-12,TODO: Verify commercial rental discounting rates,False
+PNB,home,8.40,10.15,https://www.pnbindia.in/home-loans.html,2024-09-15,PNB Max-Saver Home Loan with RLLR floating base,True
+PNB,personal,11.25,16.50,https://www.pnbindia.in/personal-loans.html,2024-09-15,TODO: Verify defense personnel special rate concessions,False
+PNB,car,8.75,11.25,https://www.pnbindia.in/car-loans.html,2024-09-15,TODO: Verify green car financing interest discount,False
+PNB,education,8.55,11.20,https://www.pnbindia.in/education-loans.html,2024-09-15,PNB Saraswati scheme for girls pursuing higher studies,True
+PNB,gold,8.75,10.50,https://www.pnbindia.in/gold-loans.html,2024-09-15,TODO: Verify agricultural vs retail gold loan schedule,False
+PNB,business,10.75,15.50,https://www.pnbindia.in/msme-banking.html,2024-09-15,TODO: Verify CGTMSE coverage fee and interest rate,False
+PNB,lap,9.15,11.40,https://www.pnbindia.in/loan-against-property.html,2024-09-15,TODO: Verify valuation empanelment criteria and margin,False
+BOB,home,8.40,10.60,https://www.bankofbaroda.in/personal-banking/loans/home-loan,2024-09-16,Baroda Home Loan Baroda Advantage floating scheme,True
+BOB,personal,11.05,17.25,https://www.bankofbaroda.in/personal-banking/loans/personal-loan,2024-09-16,TODO: Verify government employee pre-approved rate card,False
+BOB,car,8.80,11.80,https://www.bankofbaroda.in/personal-banking/loans/auto-loan,2024-09-16,TODO: Verify electric vehicle discount of 0.25%,False
+BOB,education,8.60,11.50,https://www.bankofbaroda.in/personal-banking/loans/education-loan,2024-09-16,Baroda Vidya & Scholar schemes for premier institutions,True
+BOB,gold,8.85,10.75,https://www.bankofbaroda.in/personal-banking/loans/gold-loan,2024-09-16,TODO: Verify bullet vs EMI gold repayment options,False
+BOB,business,10.85,15.75,https://www.bankofbaroda.in/business-banking/msme-loans,2024-09-16,TODO: Verify collateral-free Mudra loan limits,False
+BOB,lap,9.20,11.60,https://www.bankofbaroda.in/personal-banking/loans/loan-against-property,2024-09-16,TODO: Verify loan against commercial property margins,False
+Canara,home,8.50,10.40,https://canarabank.com/home-loans,2024-09-14,Canara Housing Loan linked to RLLR base,True
+Canara,personal,11.35,16.80,https://canarabank.com/personal-loans,2024-09-14,TODO: Verify salary account holder interest discounts,False
+Canara,car,8.80,11.90,https://canarabank.com/vehicle-loans,2024-09-14,TODO: Verify two-wheeler vs four-wheeler interest variation,False
+Canara,education,8.65,11.40,https://canarabank.com/education-loans,2024-09-14,Canara Vidya Turant scheme for IIM/IIT admits,True
+Canara,gold,8.90,11.00,https://canarabank.com/gold-loans,2024-09-14,TODO: Verify jewel loan processing fee exemption,False
+Canara,business,11.00,16.00,https://canarabank.com/msme-credit,2024-09-14,TODO: Verify working capital vs term loan rate slabs,False
+Canara,lap,9.30,11.75,https://canarabank.com/loan-against-property,2024-09-14,TODO: Verify self-declaration of property title requirements,False
+Union,home,8.45,10.35,https://www.unionbankofindia.co.in/english/home-loans.aspx,2024-09-15,Union Home Loan with zero processing fee campaign,True
+Union,personal,11.20,16.70,https://www.unionbankofindia.co.in/english/personal-loans.aspx,2024-09-15,TODO: Verify pension loan interest rates vs regular personal,False
+Union,car,8.75,11.60,https://www.unionbankofindia.co.in/english/vehicle-loans.aspx,2024-09-15,TODO: Verify green mobility initiative rate reduction,False
+Union,education,8.50,11.30,https://www.unionbankofindia.co.in/english/education-loans.aspx,2024-09-15,Union Education Special Scheme for premier management schools,True
+Union,gold,8.85,10.80,https://www.unionbankofindia.co.in/english/gold-loans.aspx,2024-09-15,TODO: Verify Hallmarked ornament valuation guidelines,False
+Union,business,10.90,15.80,https://www.unionbankofindia.co.in/english/msme-loans.aspx,2024-09-15,TODO: Verify Stand-Up India interest rate concessions,False
+Union,lap,9.25,11.65,https://www.unionbankofindia.co.in/english/loan-against-property.aspx,2024-09-15,TODO: Verify commercial unit mortgage approval rules,False
+Bajaj,personal,12.50,26.00,https://www.bajajfinserv.in/personal-loan,2024-09-19,Bajaj Finserv Flexi Personal Loan NBFC risk pricing,True
+Bajaj,home,8.95,11.50,https://www.bajajfinserv.in/home-loan,2024-09-19,Bajaj Housing Finance Ltd home loan rates,True
+Bajaj,car,9.50,14.50,https://www.bajajfinserv.in/car-loan,2024-09-19,TODO: Verify used car vs new car financing split,False
+Bajaj,gold,9.50,18.00,https://www.bajajfinserv.in/gold-loan,2024-09-19,TODO: Verify per month interest repayment frequency,False
+Bajaj,business,13.50,24.00,https://www.bajajfinserv.in/business-loan,2024-09-19,TODO: Verify unsecured enterprise credit limits,False
+Bajaj,lap,10.25,14.50,https://www.bajajfinserv.in/loan-against-property,2024-09-19,TODO: Verify maximum loan tenure (up to 18 years),False
+Tata,personal,11.99,22.00,https://www.tatacapital.com/personal-loan.html,2024-09-17,Tata Capital retail personal loan pricing,True
+Tata,home,8.90,11.25,https://www.tatacapital.com/home-loan.html,2024-09-17,Tata Capital Housing Finance Ltd rate schedule,True
+Tata,car,9.25,14.00,https://www.tatacapital.com/vehicle-loan.html,2024-09-17,TODO: Verify commercial vehicle vs passenger car spread,False
+Tata,education,10.50,14.00,https://www.tatacapital.com/education-loan.html,2024-09-17,TODO: Verify study abroad financing terms,False
+Tata,gold,9.75,17.00,https://www.tatacapital.com/gold-loan.html,2024-09-17,TODO: Verify branch doorstep gold loan scheme,False
+Tata,business,13.00,21.00,https://www.tatacapital.com/business-loan.html,2024-09-17,TODO: Verify machinery loan vs term loan rate variation,False
+Tata,lap,10.15,13.75,https://www.tatacapital.com/loan-against-property.html,2024-09-17,TODO: Verify residential property mortgage maximum LTV,False

@@ -1,0 +1,31 @@
+services:
+  # FAIRRATE FastAPI ML Backend
+  - type: web
+    name: fairrate-backend
+    runtime: python
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "python -m uvicorn backend.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"
+      - key: CORS_ORIGINS
+        value: "https://fairrate.vercel.app,http://localhost:5173"
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  # FAIRRATE React 18 + Vite Frontend
+  - type: web
+    name: fairrate-frontend
+    runtime: static
+    buildCommand: "cd frontend && npm install && npm run build"
+    staticPublishPath: "./frontend/dist"
+    routes:
+      - type: rewrite
+        source: "/*"
+        destination: "/index.html"
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: fairrate-backend
+          property: host

@@ -1,0 +1,101 @@
+{
+  "banks": [
+    { "id": "SBI", "name": "State Bank of India", "type": "psu", "base_spread": -0.25, "icon": "🏦" },
+    { "id": "HDFC", "name": "HDFC Bank", "type": "private", "base_spread": 0.00, "icon": "🔷" },
+    { "id": "ICICI", "name": "ICICI Bank", "type": "private", "base_spread": 0.15, "icon": "🟠" },
+    { "id": "Axis", "name": "Axis Bank", "type": "private", "base_spread": 0.20, "icon": "🟣" },
+    { "id": "Kotak", "name": "Kotak Mahindra Bank", "type": "private", "base_spread": 0.30, "icon": "🔴" },
+    { "id": "PNB", "name": "Punjab National Bank", "type": "psu", "base_spread": -0.15, "icon": "🏛️" },
+    { "id": "BOB", "name": "Bank of Baroda", "type": "psu", "base_spread": -0.20, "icon": "🟧" },
+    { "id": "Canara", "name": "Canara Bank", "type": "psu", "base_spread": -0.10, "icon": "🟦" },
+    { "id": "Union", "name": "Union Bank of India", "type": "psu", "base_spread": -0.10, "icon": "🟥" },
+    { "id": "Bajaj", "name": "Bajaj Finserv", "type": "nbfc", "base_spread": 0.80, "icon": "⚡" },
+    { "id": "Tata", "name": "Tata Capital", "type": "nbfc", "base_spread": 0.65, "icon": "🛡️" }
+  ],
+  "loan_types": [
+    {
+      "id": "personal",
+      "name": "Personal Loan",
+      "icon": "👤",
+      "has_ltv": false,
+      "max_ltv": null,
+      "min_tenure": 1,
+      "max_tenure": 7,
+      "min_amount": 1,
+      "max_amount": 30,
+      "base_rate_range": [10.5, 17.5]
+    },
+    {
+      "id": "home",
+      "name": "Home Loan",
+      "icon": "🏠",
+      "has_ltv": true,
+      "max_ltv": 0.90,
+      "min_tenure": 5,
+      "max_tenure": 30,
+      "min_amount": 10,
+      "max_amount": 250,
+      "base_rate_range": [8.40, 9.65]
+    },
+    {
+      "id": "car",
+      "name": "Car Loan",
+      "icon": "🚗",
+      "has_ltv": true,
+      "max_ltv": 0.90,
+      "min_tenure": 1,
+      "max_tenure": 8,
+      "min_amount": 2,
+      "max_amount": 50,
+      "base_rate_range": [8.75, 11.50]
+    },
+    {
+      "id": "education",
+      "name": "Education Loan",
+      "icon": "🎓",
+      "has_ltv": false,
+      "max_ltv": null,
+      "min_tenure": 1,
+      "max_tenure": 15,
+      "min_amount": 2,
+      "max_amount": 50,
+      "base_rate_range": [8.50, 12.00]
+    },
+    {
+      "id": "gold",
+      "name": "Gold Loan",
+      "icon": "🪙",
+      "has_ltv": true,
+      "max_ltv": 0.75,
+      "min_tenure": 1,
+      "max_tenure": 3,
+      "min_amount": 0.5,
+      "max_amount": 30,
+      "base_rate_range": [8.80, 13.50]
+    },
+    {
+      "id": "business",
+      "name": "Business Loan",
+      "icon": "🏢",
+      "has_ltv": false,
+      "max_ltv": null,
+      "min_tenure": 1,
+      "max_tenure": 7,
+      "min_amount": 3,
+      "max_amount": 100,
+      "base_rate_range": [11.50, 19.00]
+    },
+    {
+      "id": "lap",
+      "name": "Loan Against Property (LAP)",
+      "icon": "📑",
+      "has_ltv": true,
+      "max_ltv": 0.65,
+      "min_tenure": 3,
+      "max_tenure": 20,
+      "min_amount": 10,
+      "max_amount": 200,
+      "base_rate_range": [9.25, 12.50]
+    }
+  ]
+}

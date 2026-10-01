@@ -5,8 +5,16 @@ const LOAN_TYPES = [
   { value: "home",      label: "Home",        icon: "🏠" },
   { value: "car",       label: "Car",         icon: "🚗" },
   { value: "education", label: "Education",   icon: "🎓" },
+  { value: "gold",      label: "Gold",        icon: "🪙" },
+  { value: "business",  label: "Business",    icon: "🏢" },
+  { value: "lap",       label: "LAP",         icon: "📑" },
 ];
-const BANKS = ["SBI", "HDFC", "ICICI", "Axis", "Kotak"];
+
+const BANKS = [
+  "SBI", "HDFC", "ICICI", "Axis", "Kotak",
+  "PNB", "BOB", "Canara", "Union", "Bajaj", "Tata"
+];
+
 const EMPLOYMENT_TYPES = [
   { value: "salaried",      label: "Salaried",      icon: "💼" },
   { value: "self_employed",  label: "Self-Employed", icon: "🧑‍💻" },
@@ -16,14 +24,14 @@ const EMPLOYMENT_TYPES = [
 const DEFAULTS = {
   loan_type: "personal",
   bank: "HDFC",
-  credit_score: 720,
-  annual_income_lakh: 12,
+  credit_score: 600,
+  annual_income_lakh: 0,
   employment_type: "salaried",
-  loan_amount_lakh: 5,
-  tenure_years: 3,
+  loan_amount_lakh: 0,
+  tenure_years: 5,
   ltv_ratio: 0.75,
-  existing_obligations_pct: 20,
-  offered_rate: 13.5,
+  existing_obligations_pct: 0,
+  offered_rate: 0,
 };
 
 function Label({ children, sub }) {
@@ -91,12 +99,17 @@ export default function LoanForm({ onSubmit, loading, values }) {
     setForm(prev => ({ ...prev, [key]: val }));
   }, []);
 
-  const showLTV = form.loan_type === "home" || form.loan_type === "car";
+  const showLTV = ["home", "car", "gold", "lap"].includes(form.loan_type);
+  const maxLTV = form.loan_type === "gold" ? 0.75 : form.loan_type === "lap" ? 0.65 : 0.90;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = { ...form };
-    if (!showLTV) payload.ltv_ratio = null;
+    if (!showLTV) {
+      payload.ltv_ratio = null;
+    } else {
+      payload.ltv_ratio = Math.min(Number(payload.ltv_ratio || 0.75), maxLTV);
+    }
     onSubmit(payload);
   };
 
@@ -105,11 +118,11 @@ export default function LoanForm({ onSubmit, loading, values }) {
     form.credit_score >= 650 ? "#fbbf24" : "#f87171";
 
   return (
-    <form onSubmit={handleSubmit} id="loan-form">
+    <form onSubmit={handleSubmit} id="loan-form" className="space-y-6">
       {/* ── Loan Type ── */}
       <FieldGroup>
         <Label sub="What kind of loan are you evaluating?">Loan Type</Label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {LOAN_TYPES.map(lt => (
             <button
               key={lt.value}
@@ -248,26 +261,36 @@ export default function LoanForm({ onSubmit, loading, values }) {
       {/* ── LTV Ratio (conditional) ── */}
       {showLTV && (
         <FieldGroup>
-          <Label sub="Loan value ÷ property/car value (e.g. 0.75 = 75%)">LTV Ratio</Label>
-          <div className="flex items-center gap-3 mb-2">
+          <Label sub="Loan value ÷ property/car value (ratio 0.0 to 1.0, e.g. 0.75 = 75%)">
+            Loan-to-Value (LTV) Ratio
+          </Label>
+          <div className="flex items-center gap-3 mb-2 flex-wrap">
             <span className="text-2xl font-black" style={{ color: "#c084fc", fontFamily: "Outfit, sans-serif" }}>
               {(form.ltv_ratio * 100).toFixed(0)}%
             </span>
+            <span className="text-xs px-2 py-0.5 rounded font-mono font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+              ratio: {form.ltv_ratio.toFixed(2)}
+            </span>
+            {form.ltv_ratio >= 0.85 && (
+              <span className="text-[11px] text-amber-400 font-semibold">
+                ⚠️ High LTV tier (&ge; 0.85 adds risk spread)
+              </span>
+            )}
           </div>
           <input
             id="ltv-slider"
             type="range"
-            min={0.50}
-            max={0.90}
+            min={0.40}
+            max={maxLTV}
             step={0.01}
-            value={form.ltv_ratio}
+            value={Math.min(form.ltv_ratio, maxLTV)}
             onChange={e => set("ltv_ratio", Number(e.target.value))}
             style={{
-              background: `linear-gradient(to right, #a855f7 ${((form.ltv_ratio - 0.5) / 0.4) * 100}%, rgba(255,255,255,0.08) ${((form.ltv_ratio - 0.5) / 0.4) * 100}%)`,
+              background: `linear-gradient(to right, #a855f7 ${((Math.min(form.ltv_ratio, maxLTV) - 0.4) / (maxLTV - 0.4)) * 100}%, rgba(255,255,255,0.08) ${((Math.min(form.ltv_ratio, maxLTV) - 0.4) / (maxLTV - 0.4)) * 100}%)`,
             }}
           />
           <div className="flex justify-between text-xs text-slate-500 mt-1">
-            <span>50%</span><span>90%</span>
+            <span>40% (0.40)</span><span>{(maxLTV * 100).toFixed(0)}% (RBI Cap: {maxLTV.toFixed(2)})</span>
           </div>
         </FieldGroup>
       )}
