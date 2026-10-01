@@ -37,37 +37,65 @@ export default function FairnessAuditView() {
     runAudit(threshold);
   }, [threshold]);
 
-  const employmentData = audit?.employment_type_audit
+  const employmentData = Array.isArray(audit?.slices?.employment_type)
+    ? audit.slices.employment_type.map((item) => ({
+        name: (item.employment_type || "").replace(/_/g, " "),
+        avg_rate: item.avg_rate ?? item.avg_predicted_rate,
+        mae: item.mae,
+        count: item.count,
+      }))
+    : audit?.employment_type_audit
     ? Object.entries(audit.employment_type_audit).map(([key, val]) => ({
         name: key.replace(/_/g, " "),
-        avg_rate: val.avg_predicted_rate,
+        avg_rate: val.avg_predicted_rate ?? val.avg_rate,
         mae: val.mae,
         count: val.count,
       }))
     : [];
 
-  const bankData = audit?.bank_audit
+  const bankData = Array.isArray(audit?.slices?.bank)
+    ? audit.slices.bank.map((item) => ({
+        name: item.bank,
+        avg_rate: item.avg_rate ?? item.avg_predicted_rate,
+        mae: item.mae,
+        count: item.count,
+      }))
+    : audit?.bank_audit
     ? Object.entries(audit.bank_audit).map(([key, val]) => ({
         name: key,
-        avg_rate: val.avg_predicted_rate,
+        avg_rate: val.avg_predicted_rate ?? val.avg_rate,
         mae: val.mae,
         count: val.count,
       }))
     : [];
 
-  const loanTypeData = audit?.loan_type_audit
+  const loanTypeData = Array.isArray(audit?.slices?.loan_type)
+    ? audit.slices.loan_type.map((item) => ({
+        name: (item.loan_type || "").toUpperCase(),
+        avg_rate: item.avg_rate ?? item.avg_predicted_rate,
+        mae: item.mae,
+        count: item.count,
+      }))
+    : audit?.loan_type_audit
     ? Object.entries(audit.loan_type_audit).map(([key, val]) => ({
         name: key,
-        avg_rate: val.avg_predicted_rate,
+        avg_rate: val.avg_predicted_rate ?? val.avg_rate,
         mae: val.mae,
         count: val.count,
       }))
     : [];
 
-  const incomeData = audit?.income_band_audit
+  const incomeData = Array.isArray(audit?.slices?.income_band)
+    ? audit.slices.income_band.map((item) => ({
+        name: item.income_band,
+        avg_rate: item.avg_rate ?? item.avg_predicted_rate,
+        mae: item.mae,
+        count: item.count,
+      }))
+    : audit?.income_band_audit
     ? Object.entries(audit.income_band_audit).map(([key, val]) => ({
         name: key,
-        avg_rate: val.avg_predicted_rate,
+        avg_rate: val.avg_predicted_rate ?? val.avg_rate,
         mae: val.mae,
         count: val.count,
       }))

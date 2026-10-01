@@ -73,42 +73,47 @@ export default function DriftMonitorView() {
           </div>
 
           {/* Macro Policy Rate Tracking */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="glass p-4 rounded-xl text-center">
-              <span className="text-xs text-slate-400 uppercase">Training Repo Benchmark</span>
-              <div className="text-2xl font-black text-slate-200 mt-1">
-                {data.macro_drift?.training_repo_rate_pct?.toFixed(2)}%
-              </div>
-              <span className="text-[10px] text-slate-500">Stored in model metadata</span>
-            </div>
+          {(() => {
+            const trainingRate = data.macro_drift?.training_repo_rate_pct ?? data.policy_rates?.trained_repo_rate ?? 6.5;
+            const currentRate = data.macro_drift?.current_repo_rate_pct ?? data.policy_rates?.current_repo_rate ?? 6.5;
+            const deltaBps = data.macro_drift?.repo_rate_delta_bps ?? data.policy_rates?.repo_delta_bps ?? 0;
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="glass p-4 rounded-xl text-center">
+                  <span className="text-xs text-slate-400 uppercase">Training Repo Benchmark</span>
+                  <div className="text-2xl font-black text-slate-200 mt-1">
+                    {Number(trainingRate).toFixed(2)}%
+                  </div>
+                  <span className="text-[10px] text-slate-500">Stored in model metadata</span>
+                </div>
 
-            <div className="glass p-4 rounded-xl text-center">
-              <span className="text-xs text-slate-400 uppercase">Current RBI Repo Rate</span>
-              <div className="text-2xl font-black text-indigo-300 mt-1">
-                {data.macro_drift?.current_repo_rate_pct?.toFixed(2)}%
-              </div>
-              <span className="text-[10px] text-slate-500">From config/rbi_rates.json</span>
-            </div>
+                <div className="glass p-4 rounded-xl text-center">
+                  <span className="text-xs text-slate-400 uppercase">Current RBI Repo Rate</span>
+                  <div className="text-2xl font-black text-indigo-300 mt-1">
+                    {Number(currentRate).toFixed(2)}%
+                  </div>
+                  <span className="text-[10px] text-slate-500">From config/rbi_rates.json</span>
+                </div>
 
-            <div className="glass p-4 rounded-xl text-center">
-              <span className="text-xs text-slate-400 uppercase">Macro Policy Shift</span>
-              <div
-                className={`text-2xl font-black mt-1 ${
-                  Math.abs(data.macro_drift?.repo_rate_delta_bps || 0) > 50
-                    ? "text-red-400"
-                    : "text-teal-400"
-                }`}
-              >
-                {data.macro_drift?.repo_rate_delta_bps > 0 ? "+" : ""}
-                {data.macro_drift?.repo_rate_delta_bps} bps
+                <div className="glass p-4 rounded-xl text-center">
+                  <span className="text-xs text-slate-400 uppercase">Macro Policy Shift</span>
+                  <div
+                    className={`text-2xl font-black mt-1 ${
+                      Math.abs(deltaBps) > 50 ? "text-red-400" : "text-teal-400"
+                    }`}
+                  >
+                    {deltaBps > 0 ? "+" : ""}
+                    {deltaBps} bps
+                  </div>
+                  <span className="text-[10px] text-slate-500">
+                    {Math.abs(deltaBps) > 50
+                      ? "Retrain recommended"
+                      : "Within stable envelope"}
+                  </span>
+                </div>
               </div>
-              <span className="text-[10px] text-slate-500">
-                {Math.abs(data.macro_drift?.repo_rate_delta_bps || 0) > 50
-                  ? "Retrain recommended"
-                  : "Within stable envelope"}
-              </span>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* PSI Feature Drift Table */}
           {data.feature_drift && Object.keys(data.feature_drift).length > 0 && (

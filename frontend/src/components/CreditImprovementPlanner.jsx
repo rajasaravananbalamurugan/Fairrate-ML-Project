@@ -41,8 +41,9 @@ export default function CreditImprovementPlanner({ formValues }) {
 
   const formatINR = (val) => "₹" + Math.round(val || 0).toLocaleString("en-IN");
 
-  const progressPct = result
-    ? Math.min(100, Math.max(0, ((creditScore - 600) / (result.next_target_tier - 600)) * 100))
+  const targetTier = result?.next_target_tier || 750;
+  const progressPct = result && targetTier > 600
+    ? Math.min(100, Math.max(0, ((creditScore - 600) / (targetTier - 600)) * 100))
     : 50;
 
   return (

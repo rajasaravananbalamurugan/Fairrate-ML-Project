@@ -37,7 +37,7 @@ export default function AiNegotiationScript({ result, formValues }) {
         competitor_rates: competitorRates,
       });
 
-      setScriptText(data.script);
+      setScriptText(data?.script || data?.negotiation_text || "");
     } catch (err) {
       setError(err?.response?.data?.detail || err.message || "Failed to generate script");
     } finally {

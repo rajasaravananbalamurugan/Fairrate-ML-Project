@@ -47,7 +47,14 @@ export default function ChatAssistant({ result, formValues }) {
         context: context,
       });
 
-      setMessages((prev) => [...prev, { role: "assistant", text: data.reply }]);
+      const replyText =
+        data?.reply ||
+        data?.answer ||
+        data?.message ||
+        data?.text ||
+        "I could not retrieve an answer at this time. Please try again.";
+
+      setMessages((prev) => [...prev, { role: "assistant", text: replyText }]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, Suspense, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import { predictFairRateV2, fetchModelRegistry } from "./api";
 import LoginPage from "./components/LoginPage";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./index.css";
 
 // ── Lazy Loaded Section Components ──
@@ -124,13 +125,28 @@ export default function App() {
   const [theme, setTheme] = useState(localStorage.getItem("fairrate_theme") || "dark");
   const [modelVersion, setModelVersion] = useState("v2.0.0");
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem("fairrate_user");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
 
   const handleLogin = (userData) => {
     setUser(userData);
+    try {
+      localStorage.setItem("fairrate_user", JSON.stringify(userData));
+    } catch (e) {
+      console.error("Failed to persist user session:", e);
+    }
   };
 
   const handleLogout = () => {
+    try {
+      localStorage.removeItem("fairrate_user");
+    } catch (e) {}
     setUser(null);
     setResult(null);
     setFormValues({
@@ -327,11 +343,11 @@ export default function App() {
           <div className="px-2 pt-2 border-t border-slate-800/60">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
-                {user.name.charAt(0).toUpperCase()}
+                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-200 truncate">{user.name}</p>
-                <p className="text-[10px] text-slate-500 truncate">{user.email}</p>
+                <p className="text-xs font-bold text-slate-200 truncate">{user?.name || "User"}</p>
+                <p className="text-[10px] text-slate-500 truncate">{user?.email || ""}</p>
               </div>
             </div>
             <button
@@ -466,120 +482,122 @@ export default function App() {
             </div>
           )}
 
-          <Suspense fallback={<SectionLoader />}>
-            {/* ── 1. ANALYZE GROUP ── */}
-            {activeSection === "profile" && (
-              <div className="max-w-2xl mx-auto fade-in-up">
-                <div className="mb-6 text-center">
-                  <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
-                    Loan Rate Fairness Profile
-                  </h1>
-                  <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">
-                    Enter your loan parameters, pick an archetypal persona, or upload your sanction letter to test rate fairness.
-                  </p>
-                </div>
-                <div className="glass rounded-2xl p-6 sm:p-8 border border-indigo-500/25">
-                  <LoanForm onSubmit={handleSubmit} loading={loading} values={formValues} />
-                </div>
-              </div>
-            )}
-
-            {activeSection === "verdict" && (
-              <div className="max-w-3xl mx-auto fade-in-up">
-                {!hasResult ? (
-                  <PromptCard
-                    onGoToProfile={() => setActiveSection("profile")}
-                    title="No Rate Verdict Available Yet"
-                    desc="Submit your loan profile to view the AI fairness verdict, rate spread, reducing-balance EMI impact, and bank negotiation script."
-                  />
-                ) : (
-                  <VerdictCard result={result} formValues={formValues} loanType={formValues.loan_type} />
-                )}
-              </div>
-            )}
-
-            {activeSection === "shap" && (
-              <div className="max-w-4xl mx-auto space-y-6 fade-in-up">
-                {!hasResult ? (
-                  <PromptCard
-                    onGoToProfile={() => setActiveSection("profile")}
-                    icon="🌊"
-                    title="SHAP Explainability Locked"
-                    desc="Run a check on the Profile tab to view the step-by-step SHAP waterfall impact factors."
-                  />
-                ) : (
-                  <div className="glass rounded-2xl p-6 border border-indigo-500/25">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xl">🌊</span>
-                      <div>
-                        <h3 className="text-base font-bold text-white tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
-                          SHAP Feature Impact Waterfall
-                        </h3>
-                        <p className="text-xs text-slate-400">
-                          Marginal contribution of each risk attribute toward your predicted fair rate
-                        </p>
-                      </div>
-                    </div>
-                    <ShapWaterfall result={result} />
+          <ErrorBoundary onReset={() => setActiveSection(activeSection)} fallbackToProfile={() => setActiveSection("profile")}>
+            <Suspense fallback={<SectionLoader />}>
+              {/* ── 1. ANALYZE GROUP ── */}
+              {activeSection === "profile" && (
+                <div className="max-w-2xl mx-auto fade-in-up">
+                  <div className="mb-6 text-center">
+                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
+                      Loan Rate Fairness Profile
+                    </h1>
+                    <p className="text-xs sm:text-sm text-slate-400 max-w-lg mx-auto">
+                      Enter your loan parameters, pick an archetypal persona, or upload your sanction letter to test rate fairness.
+                    </p>
                   </div>
-                )}
-              </div>
-            )}
+                  <div className="glass rounded-2xl p-6 sm:p-8 border border-indigo-500/25">
+                    <LoanForm onSubmit={handleSubmit} loading={loading} values={formValues} />
+                  </div>
+                </div>
+              )}
 
-            {activeSection === "compare" && (
-              <div className="max-w-4xl mx-auto fade-in-up">
-                {!hasResult ? (
-                  <PromptCard
-                    onGoToProfile={() => setActiveSection("profile")}
-                    icon="🏦"
-                    title="Bank Comparison Locked"
-                    desc="Submit your loan profile to compare rates across all 11 Indian banks and NBFCs."
-                  />
-                ) : (
-                  <BankComparison result={result} formValues={formValues} />
-                )}
-              </div>
-            )}
+              {activeSection === "verdict" && (
+                <div className="max-w-3xl mx-auto fade-in-up">
+                  {!hasResult ? (
+                    <PromptCard
+                      onGoToProfile={() => setActiveSection("profile")}
+                      title="No Rate Verdict Available Yet"
+                      desc="Submit your loan profile to view the AI fairness verdict, rate spread, reducing-balance EMI impact, and bank negotiation script."
+                    />
+                  ) : (
+                    <VerdictCard result={result} formValues={formValues} loanType={formValues.loan_type} />
+                  )}
+                </div>
+              )}
 
-            {activeSection === "what_if" && (
-              <div className="max-w-4xl mx-auto fade-in-up">
-                {!hasResult ? (
-                  <PromptCard
-                    onGoToProfile={() => setActiveSection("profile")}
-                    icon="🎛️"
-                    title="What-If Simulator Locked"
-                    desc="Submit your loan profile to explore how tweaking credit score, tenure, or loan amount changes your rate."
-                  />
-                ) : (
-                  <WhatIfSimulator result={result} formValues={formValues} />
-                )}
-              </div>
-            )}
+              {activeSection === "shap" && (
+                <div className="max-w-4xl mx-auto space-y-6 fade-in-up">
+                  {!hasResult ? (
+                    <PromptCard
+                      onGoToProfile={() => setActiveSection("profile")}
+                      icon="🌊"
+                      title="SHAP Explainability Locked"
+                      desc="Run a check on the Profile tab to view the step-by-step SHAP waterfall impact factors."
+                    />
+                  ) : (
+                    <div className="glass rounded-2xl p-6 border border-indigo-500/25">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="text-xl">🌊</span>
+                        <div>
+                          <h3 className="text-base font-bold text-white tracking-tight" style={{ fontFamily: "Outfit, sans-serif" }}>
+                            SHAP Feature Impact Waterfall
+                          </h3>
+                          <p className="text-xs text-slate-400">
+                            Marginal contribution of each risk attribute toward your predicted fair rate
+                          </p>
+                        </div>
+                      </div>
+                      <ShapWaterfall result={result} />
+                    </div>
+                  )}
+                </div>
+              )}
 
-            {/* ── 2. PLAN GROUP ── */}
-            {activeSection === "prepayment" && <PrepaymentCalculator formValues={formValues} />}
-            {activeSection === "balance_transfer" && <BalanceTransferCalculator formValues={formValues} />}
-            {activeSection === "apr" && <AprCalculator formValues={formValues} />}
-            {activeSection === "repo" && <RepoSimulator formValues={formValues} />}
-            {activeSection === "credit_planner" && <CreditImprovementPlanner formValues={formValues} />}
+              {activeSection === "compare" && (
+                <div className="max-w-4xl mx-auto fade-in-up">
+                  {!hasResult ? (
+                    <PromptCard
+                      onGoToProfile={() => setActiveSection("profile")}
+                      icon="🏦"
+                      title="Bank Comparison Locked"
+                      desc="Submit your loan profile to compare rates across all 11 Indian banks and NBFCs."
+                    />
+                  ) : (
+                    <BankComparison result={result} formValues={formValues} />
+                  )}
+                </div>
+              )}
 
-            {/* ── 3. TOOLS GROUP ── */}
-            {activeSection === "upload_offer" && <OfferParser onApplyToProfile={handleApplyOffer} />}
-            {activeSection === "negotiation_script" && (
-              <AiNegotiationScript result={result} formValues={formValues} />
-            )}
-            {activeSection === "chat_assistant" && <ChatAssistant result={result} formValues={formValues} />}
-            {activeSection === "share" && <ShareResultModal result={result} formValues={formValues} />}
+              {activeSection === "what_if" && (
+                <div className="max-w-4xl mx-auto fade-in-up">
+                  {!hasResult ? (
+                    <PromptCard
+                      onGoToProfile={() => setActiveSection("profile")}
+                      icon="🎛️"
+                      title="What-If Simulator Locked"
+                      desc="Submit your loan profile to explore how tweaking credit score, tenure, or loan amount changes your rate."
+                    />
+                  ) : (
+                    <WhatIfSimulator result={result} formValues={formValues} />
+                  )}
+                </div>
+              )}
 
-            {/* ── 4. MODEL LAB GROUP ── */}
-            {activeSection === "fairness_audit" && <FairnessAuditView />}
-            {activeSection === "model_comparison" && <ModelComparisonView />}
-            {activeSection === "prediction_intervals" && (
-              <PredictionIntervalsView result={result} formValues={formValues} />
-            )}
-            {activeSection === "data_sources" && <DataSourcesView />}
-            {activeSection === "drift_monitor" && <DriftMonitorView />}
-          </Suspense>
+              {/* ── 2. PLAN GROUP ── */}
+              {activeSection === "prepayment" && <PrepaymentCalculator formValues={formValues} />}
+              {activeSection === "balance_transfer" && <BalanceTransferCalculator formValues={formValues} />}
+              {activeSection === "apr" && <AprCalculator formValues={formValues} />}
+              {activeSection === "repo" && <RepoSimulator formValues={formValues} />}
+              {activeSection === "credit_planner" && <CreditImprovementPlanner formValues={formValues} />}
+
+              {/* ── 3. TOOLS GROUP ── */}
+              {activeSection === "upload_offer" && <OfferParser onApplyToProfile={handleApplyOffer} />}
+              {activeSection === "negotiation_script" && (
+                <AiNegotiationScript result={result} formValues={formValues} />
+              )}
+              {activeSection === "chat_assistant" && <ChatAssistant result={result} formValues={formValues} />}
+              {activeSection === "share" && <ShareResultModal result={result} formValues={formValues} />}
+
+              {/* ── 4. MODEL LAB GROUP ── */}
+              {activeSection === "fairness_audit" && <FairnessAuditView />}
+              {activeSection === "model_comparison" && <ModelComparisonView />}
+              {activeSection === "prediction_intervals" && (
+                <PredictionIntervalsView result={result} formValues={formValues} />
+              )}
+              {activeSection === "data_sources" && <DataSourcesView />}
+              {activeSection === "drift_monitor" && <DriftMonitorView />}
+            </Suspense>
+          </ErrorBoundary>
         </main>
 
         {/* ── FOOTER WITH MODEL VERSION & PERSISTENT DISCLAIMER ── */}

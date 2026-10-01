@@ -29,14 +29,23 @@ export default function ModelComparisonView() {
       });
   }, []);
 
-  const modelsList = data?.models
-    ? Object.entries(data.models).map(([name, m]) => ({
-        name,
+  const modelsList = Array.isArray(data?.models)
+    ? data.models.map((m) => ({
+        name: m.model_name || m.name || "Model",
         rmse: m.rmse,
         mae: m.mae,
         r2: m.r2,
-        cv_std: m.cv_rmse_std,
-        time_sec: m.training_time_sec,
+        cv_std: m.rmse_std ?? m.cv_rmse_std ?? 0,
+        time_sec: m.training_time_sec ?? 0,
+      }))
+    : data?.models
+    ? Object.entries(data.models).map(([name, m]) => ({
+        name: m.model_name || name,
+        rmse: m.rmse,
+        mae: m.mae,
+        r2: m.r2,
+        cv_std: m.rmse_std ?? m.cv_rmse_std ?? 0,
+        time_sec: m.training_time_sec ?? 0,
       }))
     : [];
 

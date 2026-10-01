@@ -12,8 +12,13 @@ import json
 import logging
 from typing import Dict, Any, Optional
 
+from pathlib import Path
+
 try:
     from dotenv import load_dotenv
+    root_env = Path(__file__).resolve().parent.parent / ".env"
+    if root_env.exists():
+        load_dotenv(dotenv_path=root_env)
     load_dotenv()
 except ImportError:
     pass
@@ -50,7 +55,7 @@ def call_groq_llm(messages: list, model: str = "openai/gpt-oss-120b", max_tokens
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
-    models_to_try = [model, "openai/gpt-oss-20b", "qwen/qwen3.8-27b"]
+    models_to_try = [model, "openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.8-27b", "llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
 
     for m in models_to_try:
         try:
@@ -295,10 +300,12 @@ def generate_negotiation_script(data: Dict[str, Any]) -> Dict[str, Any]:
         llm_resp = call_anthropic_llm(prompt)
 
     if llm_resp and len(llm_resp.strip()) > 100:
+        cleaned_letter = llm_resp.strip()
         return {
             "title": f"{tone.capitalize()} AI Negotiation Letter",
             "tone": tone,
-            "negotiation_text": llm_resp.strip(),
+            "negotiation_text": cleaned_letter,
+            "script": cleaned_letter,
             "generator": "Groq LLM AI Engine",
         }
 
@@ -358,6 +365,7 @@ def generate_negotiation_script(data: Dict[str, Any]) -> Dict[str, Any]:
         "title": tone_title,
         "tone": tone,
         "negotiation_text": letter_body,
+        "script": letter_body,
         "generator": "Template Engine",
     }
 
@@ -410,9 +418,11 @@ def handle_chat_assistant(question: str, context: Dict[str, Any]) -> Dict[str, A
         llm_answer = call_anthropic_llm(f"{system_instruction}\n{context_str}\nQuestion: {question}")
 
     if llm_answer and len(llm_answer.strip()) > 20:
+        cleaned_ans = llm_answer.strip()
         return {
             "question": question,
-            "answer": llm_answer.strip(),
+            "answer": cleaned_ans,
+            "reply": cleaned_ans,
             "disclaimer": "FAIRRATE is for educational purposes only and uses machine learning baselines. Not official financial advice.",
             "powered_by": "Groq AI High-Speed Inference",
         }
@@ -447,6 +457,7 @@ def handle_chat_assistant(question: str, context: Dict[str, Any]) -> Dict[str, A
     return {
         "question": question,
         "answer": ans,
+        "reply": ans,
         "disclaimer": "FAIRRATE is for educational purposes only and uses synthetic/calibrated data. Not official financial advice.",
         "powered_by": "Heuristic Knowledge Base",
     }
