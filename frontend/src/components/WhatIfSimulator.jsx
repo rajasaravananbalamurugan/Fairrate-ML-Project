@@ -123,8 +123,22 @@ export default function WhatIfSimulator({ result, formValues }) {
     return `Adjust the sliders to explore how profile improvements lower your interest rate.`;
   };
 
-  // If no result exists yet
-  if (!result) return null;
+  // Loading skeleton when no result
+  if (!result) {
+    return (
+      <div className="glass rounded-2xl p-6 border border-indigo-500/20 animate-pulse">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-6 h-6 bg-slate-700/60 rounded-full" />
+          <div className="h-5 w-48 bg-slate-700/60 rounded" />
+        </div>
+        <div className="space-y-4">
+          <div className="h-14 bg-slate-800/80 rounded-xl" />
+          <div className="h-14 bg-slate-800/80 rounded-xl" />
+          <div className="h-14 bg-slate-800/80 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="glass rounded-2xl p-6 border border-indigo-500/20 fade-in-up">

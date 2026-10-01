@@ -7,8 +7,8 @@ const LOAN_EMOJIS = {
   education: "🎓",
 };
 
-export default function HistoryPanel({ onReplay, currentHistory, onClearHistory }) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function HistoryPanel({ onReplay, currentHistory, onClearHistory, forceOpen = false, standalone = false }) {
+  const [isOpen, setIsOpen] = useState(forceOpen);
   const [history, setHistory] = useState(currentHistory || []);
 
   useEffect(() => {
@@ -17,12 +17,38 @@ export default function HistoryPanel({ onReplay, currentHistory, onClearHistory 
     }
   }, [currentHistory]);
 
+  useEffect(() => {
+    if (forceOpen) {
+      setIsOpen(true);
+    }
+  }, [forceOpen]);
+
   const count = history.length;
-  if (count === 0) return null;
+
+  if (count === 0 && !standalone) return null;
+
+  if (count === 0 && standalone) {
+    return (
+      <div className="glass rounded-2xl p-8 text-center border border-indigo-500/20 fade-in-up">
+        <div className="text-4xl mb-3">🕒</div>
+        <h3 className="text-base font-bold text-white mb-2" style={{ fontFamily: "Outfit, sans-serif" }}>
+          No Recent Checks Yet
+        </h3>
+        <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+          Checks you perform will automatically be saved to your browser's local storage (up to 5 recent queries).
+          Fill out your profile and click "Check Rate Fairness" to get started!
+        </p>
+      </div>
+    );
+  }
+
+  const containerClasses = standalone
+    ? "glass rounded-2xl border border-indigo-500/20 overflow-hidden shadow-lg fade-in-up"
+    : "max-w-6xl mx-auto px-4 mb-6";
 
   return (
-    <div className="max-w-6xl mx-auto px-4 mb-6">
-      <div className="glass rounded-2xl border border-indigo-500/20 overflow-hidden shadow-lg">
+    <div className={containerClasses}>
+      <div className={standalone ? "" : "glass rounded-2xl border border-indigo-500/20 overflow-hidden shadow-lg"}>
         {/* Accordion Toggle Header */}
         <button
           type="button"
